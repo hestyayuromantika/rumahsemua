@@ -1,0 +1,5 @@
+{
+  "name": "rumahkita",
+  "description": "A secure Medical AI Delegation Hub that routes patient intent to specialized agents with strict data control mandates.",
+  "requestFramePermissions": []
+}
