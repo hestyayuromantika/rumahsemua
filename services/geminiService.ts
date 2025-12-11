@@ -8,8 +8,15 @@ import {
 } from '../constants';
 import { AgentType, ToolCallDetails } from '../types';
 
-// Initialize Gemini Client
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Helper to get initialized AI client safely
+// We initialize inside the function to prevent top-level crashes if process.env is undefined at load time
+function getAiClient(): GoogleGenAI {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new Error("API Key is missing. Please ensure process.env.API_KEY is configured.");
+  }
+  return new GoogleGenAI({ apiKey: apiKey });
+}
 
 // We simulate a session state here for the demo, but in a real app this would be more robust
 interface DelegationResult {
@@ -28,6 +35,9 @@ export async function processUserMessage(
   userMessage: string,
   onStatusUpdate: (status: string, agent: AgentType) => void
 ): Promise<DelegationResult> {
+
+  // Initialize client here to catch errors gracefully during interaction
+  const ai = getAiClient();
 
   // --- Step 1: Navigator Analysis ---
   onStatusUpdate("Validating intent & ensuring protocol...", AgentType.NAVIGATOR);
